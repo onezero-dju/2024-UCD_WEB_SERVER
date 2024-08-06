@@ -1,5 +1,6 @@
 package com.example.oauthjwt.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,8 +32,13 @@ public class JWTUtil {
 
     // JWT의 만료 시간이 현재 시간보다 이전인지 확인합니다. 만료되었으면 true, 그렇지 않으면 false를 반환
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        // 토큰이 만료되었을 때 예외 처리
+        try {
+            Date expiration = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
     // jwt 토큰 생성 하기
     public String createJwt(String username, String role, Long expiredMs){
