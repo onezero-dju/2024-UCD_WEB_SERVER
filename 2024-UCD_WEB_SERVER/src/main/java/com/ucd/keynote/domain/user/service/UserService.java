@@ -1,6 +1,6 @@
 package com.ucd.keynote.domain.user.service;
 
-import com.ucd.keynote.domain.user.dto.UserDto;
+import com.ucd.keynote.domain.user.dto.UserDTO;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class UserService {
     }
 
     // 사용자 등록
-    public UserDto registerUser(UserDto userDto){
+    public UserDTO registerUser(UserDTO userDto){
         UserEntity userEntity = new UserEntity();
         userEntity.setName(userDto.getName());
         userEntity.setEmail(userDto.getEmail());

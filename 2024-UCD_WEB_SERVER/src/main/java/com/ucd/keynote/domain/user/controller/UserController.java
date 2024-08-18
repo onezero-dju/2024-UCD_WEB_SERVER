@@ -1,6 +1,6 @@
 package com.ucd.keynote.domain.user.controller;
 
-import com.ucd.keynote.domain.user.dto.UserDto;
+import com.ucd.keynote.domain.user.dto.UserDTO;
 import com.ucd.keynote.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto){
-        UserDto createdUser = userService.registerUser(userDto);
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDto){
+        UserDTO createdUser = userService.registerUser(userDto);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 }
