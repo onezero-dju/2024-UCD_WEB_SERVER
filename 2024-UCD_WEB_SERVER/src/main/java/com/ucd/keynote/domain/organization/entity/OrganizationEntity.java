@@ -14,7 +14,7 @@ import lombok.Setter;
 public class OrganizationEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long organizationId;
 
     @Column(nullable = false)
     private String name;

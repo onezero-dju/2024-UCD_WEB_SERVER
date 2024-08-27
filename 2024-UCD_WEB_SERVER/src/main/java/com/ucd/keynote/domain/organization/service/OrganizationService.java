@@ -25,7 +25,7 @@ public class OrganizationService {
         organizationRepository.save(organizationEntity);
 
         // 저장된 엔티티의 ID를 DTO에 설정하여 반환
-        organizationDto.setId(organizationEntity.getId());
+        organizationDto.setOrganizationId(organizationEntity.getOrganizationId());
         return organizationDto;
     }
 
@@ -34,7 +34,7 @@ public class OrganizationService {
         Optional<OrganizationEntity> organizationEntity = organizationRepository.findById(id);
         if(organizationEntity.isPresent()){
             OrganizationDto organizationDto = new OrganizationDto();
-            organizationDto.setId(organizationEntity.get().getId());
+            organizationDto.setOrganizationId(organizationEntity.get().getOrganizationId());
             organizationDto.setName(organizationEntity.get().getName());
             organizationDto.setDescription(organizationEntity.get().getDescription());
             return organizationDto;

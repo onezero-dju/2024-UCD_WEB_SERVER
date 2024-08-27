@@ -19,7 +19,7 @@ public class JoinService {
 
     public void joinProcess(JoinDTO joinDTO) {
 
-        String name = joinDTO.getName();
+        String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
         String email = joinDTO.getEmail();
 
@@ -31,13 +31,13 @@ public class JoinService {
             return;
         }
 
-        UserEntity data = new UserEntity();
+        UserEntity user = new UserEntity();
 
-        data.setName(name);
-        data.setPassword(bCryptPasswordEncoder.encode(password)); // 암호화를 진행하여 저장
-        data.setEmail(email);
-        data.setRole("ROLE_ADMIN");
+        user.setUsername(username);
+        user.setPassword(bCryptPasswordEncoder.encode(password)); // 암호화를 진행하여 저장
+        user.setEmail(email);
+        user.setRole("ROLE_ADMIN");
 
-        userRepository.save(data);
+        userRepository.save(user);
     }
 }

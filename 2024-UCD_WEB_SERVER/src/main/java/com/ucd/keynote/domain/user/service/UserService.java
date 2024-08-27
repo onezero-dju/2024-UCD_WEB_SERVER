@@ -17,7 +17,7 @@ public class UserService {
     // 사용자 등록
     public UserDTO registerUser(UserDTO userDto){
         UserEntity userEntity = new UserEntity();
-        userEntity.setName(userDto.getName());
+        userEntity.setUsername(userDto.getUsername());
         userEntity.setEmail(userDto.getEmail());
         userEntity.setPassword(userDto.getPassword());
         userEntity.setRole("USER");

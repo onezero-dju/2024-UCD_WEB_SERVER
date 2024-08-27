@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(nullable = false)
-    private String name;
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -27,12 +28,9 @@ public class UserEntity extends BaseEntity {
     private String password;
 
     @Column
-    private String username;
+    private String oauthId;
 
     @Column(nullable = false)
     private String role;
-
-    @Column
-    private String jwt;
 
 }

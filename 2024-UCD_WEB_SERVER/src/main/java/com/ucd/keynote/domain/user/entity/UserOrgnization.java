@@ -38,6 +38,6 @@ public class UserOrgnization {
         this.user = user;
         this.organization = organization;
         this.role = role;
-        this.id = new UserOrganizationId(user.getId(), organization.getId());
+        this.id = new UserOrganizationId(user.getUserId(), organization.getOrganizationId());
     }
 }
