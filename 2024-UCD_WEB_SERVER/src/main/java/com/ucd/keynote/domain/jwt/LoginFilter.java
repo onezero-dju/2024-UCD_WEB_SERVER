@@ -18,13 +18,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        //클라이언트 요청에서 username, password 추출
-        String username = obtainUsername(request);
+        //클라이언트 요청에서 email, password 추출
+        String email = request.getParameter("email");
         String password = obtainPassword(request);
-        System.out.println(username);
+        System.out.println(email);
 
-        //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
+        //스프링 시큐리티에서 email과 password를 검증하기 위해서는 token에 담아야 함
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
         //token에 담은 검증을 위한 AuthenticationManager로 전달
         return authenticationManager.authenticate(authToken);
