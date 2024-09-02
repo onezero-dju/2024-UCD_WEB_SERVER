@@ -25,6 +25,10 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("user_id", Long.class);
+    }
+
     // 검증 메서드
     public String getEmail(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
@@ -47,12 +51,13 @@ public class JWTUtil {
 
 
     // 토큰 생성 메서드
-    public String createJwt(String email, String username, String role, Long expiredMs) {
+    public String createJwt(String email, String username, String role, Long userId, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("email", email)
                 .claim("username", username)
                 .claim("role", role)
+                .claim("user_id", userId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

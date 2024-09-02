@@ -45,6 +45,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String email = customUserDetails.getEmail();
         String username = customUserDetails.getUsername();
+        Long userId = customUserDetails.getUserEntity().getUserId();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -53,7 +54,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 토큰 생성
-        String token = jwtUtil.createJwt(email, username, role, 60*60*10L); // jwt가 살아 있을 시간
+        String token = jwtUtil.createJwt(email, username, role, userId,60*60*10L); // jwt가 살아 있을 시간
 
         // 쿠키 생성 및 설정
         Cookie cookie = new Cookie("token", token);

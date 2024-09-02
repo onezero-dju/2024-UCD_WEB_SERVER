@@ -1,45 +1,54 @@
 package com.ucd.keynote.domain.organization.service;
 
-import com.ucd.keynote.domain.organization.dto.OrganizationDto;
-import com.ucd.keynote.domain.organization.entity.OrganizationEntity;
+
+import com.ucd.keynote.domain.organization.entity.Organization;
+import com.ucd.keynote.domain.organization.entity.UserOrganization;
+import com.ucd.keynote.domain.organization.entity.UserOrganizationId;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
+import com.ucd.keynote.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class OrganizationService {
-    private OrganizationRepository organizationRepository;
-    @Autowired
-    public OrganizationService(OrganizationRepository organizationRepository){
+    private final OrganizationRepository organizationRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
+    private final UserRepository userRepository;
+
+    // 모든 repository를 주입받도록 수정
+    public OrganizationService(OrganizationRepository organizationRepository, UserOrganizationRepository userOrganizationRepository, UserRepository userRepository) {
         this.organizationRepository = organizationRepository;
+        this.userOrganizationRepository = userOrganizationRepository;
+        this.userRepository = userRepository;
     }
 
-    // 조직 생성
-    public OrganizationDto createOrganization(OrganizationDto organizationDto){
-        // DTO 에서 엔티티로 변환하여 데이터베이스에 저장
-        OrganizationEntity organizationEntity = new OrganizationEntity();
-        organizationEntity.setName(organizationDto.getName());
-        organizationEntity.setDescription(organizationDto.getDescription());
-        organizationRepository.save(organizationEntity);
-
-        // 저장된 엔티티의 ID를 DTO에 설정하여 반환
-        organizationDto.setOrganizationId(organizationEntity.getOrganizationId());
-        return organizationDto;
-    }
-
-    // 조직 조회
-    public OrganizationDto getOrganization(Long id){
-        Optional<OrganizationEntity> organizationEntity = organizationRepository.findById(id);
-        if(organizationEntity.isPresent()){
-            OrganizationDto organizationDto = new OrganizationDto();
-            organizationDto.setOrganizationId(organizationEntity.get().getOrganizationId());
-            organizationDto.setName(organizationEntity.get().getName());
-            organizationDto.setDescription(organizationEntity.get().getDescription());
-            return organizationDto;
-        } else {
-            throw new RuntimeException("Organization not found");
+    public Organization createOrganization(String organizationName, String description, Long userId) {
+        // 조직 이름이 중복되지 않도록 검사
+        if (organizationRepository.existsByOrganizationName(organizationName)) {
+            throw new IllegalArgumentException("Organization name already exists");
         }
+
+        // 새로운 조직 생성
+        Organization organization = new Organization();
+        organization.setOrganizationName(organizationName);
+        organization.setDescription(description);
+        organization.setCreatedAt(LocalDateTime.now());
+        organization.setUpdatedAt(LocalDateTime.now());
+
+        organizationRepository.save(organization);
+
+        // 사용자와 조직 간의 관계 설정 (관리자 역할)
+        UserOrganizationId id = new UserOrganizationId(userId, organization.getOrganizationId());
+
+        UserOrganization userOrganization = new UserOrganization();
+        userOrganization.setId(id);
+        userOrganization.setRole("admin");
+        userOrganization.setJoinedAt(LocalDateTime.now());
+
+        userOrganizationRepository.save(userOrganization);
+
+        return organization;
     }
 }

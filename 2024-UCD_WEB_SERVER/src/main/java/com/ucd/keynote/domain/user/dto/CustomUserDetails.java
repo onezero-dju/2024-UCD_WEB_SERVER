@@ -12,6 +12,7 @@ public class CustomUserDetails implements UserDetails {
     private final UserEntity userEntity;
     public CustomUserDetails(UserEntity userEntity){
         this.userEntity = userEntity;
+        System.out.println("UserEntity ID: "+ userEntity.getUserId());
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -32,6 +33,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getEmail(){
         return userEntity.getEmail();
+    }
+
+    public UserEntity getUserEntity() {
+        return this.userEntity;
     }
 
     @Override

@@ -1,32 +1,41 @@
 package com.ucd.keynote.domain.organization.controller;
 
-import com.ucd.keynote.domain.organization.dto.OrganizationDto;
+import com.ucd.keynote.domain.organization.dto.OrganizationRequest;
+import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/organizations")
 public class OrganizationController {
     private final OrganizationService organizationService;
-    @Autowired
+
     public OrganizationController(OrganizationService organizationService){
         this.organizationService = organizationService;
     }
 
     @PostMapping
-    public ResponseEntity<OrganizationDto> createdOrganization(@RequestBody OrganizationDto organizationDto){
-        // 조직 생성 요청을 처리하고 생성된 조직 정보를 반환
-        OrganizationDto createdOrganization = organizationService.createOrganization(organizationDto);
-        return new ResponseEntity<>(createdOrganization, HttpStatus.CREATED);
-    }
+    public ResponseEntity<?> createOrganization(OrganizationRequest request, Authentication authentication) {
+        // 인증된 사용자 정보 가져오기
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getUserEntity().getUserId();
+        System.out.println(userDetails);
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrganizationDto> getOrganization(@PathVariable Long id){
-        // ID로 조직 조회 요청을 처리하고 조직 정보를 반환
-        OrganizationDto organizationDto = organizationService.getOrganization(id);
-        return ResponseEntity.ok(organizationDto);
+        // 사용자 이메일과 역할 가져오기
+        String email = userDetails.getEmail(); // 인증 객체의 name은 이메일이 됩니다.
+        System.out.println(email);
+
+        // 서비스 계층에서 조직 생성 처리
+        Organization organization = organizationService.createOrganization(request.getOrganizationName(), request.getDescription(), userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(organization);
     }
 }
