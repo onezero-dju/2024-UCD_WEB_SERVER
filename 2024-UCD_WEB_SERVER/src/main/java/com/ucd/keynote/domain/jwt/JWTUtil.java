@@ -2,11 +2,15 @@ package com.ucd.keynote.domain.jwt;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -34,6 +38,11 @@ public class JWTUtil {
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities(String role) {
+        // 역할을 기반으로 GrantedAuthority 생성
+        return Collections.singletonList(new SimpleGrantedAuthority(role));
     }
 
 

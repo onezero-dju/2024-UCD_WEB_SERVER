@@ -1,21 +1,20 @@
 package com.ucd.keynote.domain.jwt;
 
-import com.ucd.keynote.domain.user.dto.CustomUserDetails;
-import com.ucd.keynote.domain.user.entity.UserEntity;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
-
+    private final List<String> excludedPaths = List.of("/login", "/api/users/signup");
     public JWTFilter(JWTUtil jwtUtil) {
 
         this.jwtUtil = jwtUtil;
@@ -24,55 +23,41 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestPath = request.getServletPath();
 
-        //request에서 Authorization 헤더를 찾음
-        String authorization= request.getHeader("Authorization");
-
-        //Authorization 헤더 검증
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-            System.out.println("token null");
+        // 특정 경로에 대해서는 필터를 적용하지 않음
+        if (excludedPaths.contains(requestPath)) {
             filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        System.out.println("authorization now");
-        //Bearer 부분 제거 후 순수 토큰만 획득(Bearer 제거)
-        String token = authorization.split(" ")[1];
+        // 쿠키에서 JWT 토큰 추출
+        String token = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
 
-        //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
-
-            System.out.println("token expired");
+        // 토큰이 없거나 만료된 경우
+        if (token == null || jwtUtil.isExpired(token)) {
             filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        //토큰에서 username과 role 획득
+        // 토큰에서 사용자 정보 추출
         String email = jwtUtil.getEmail(token);
         String role = jwtUtil.getRole(token);
-        // String usernmae = jwtUtil.getUserName(token);
 
+        // 인증 객체 생성 및 컨텍스트에 설정
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(email, null, jwtUtil.getAuthorities(role));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        //userEntity를 생성하여 값 set
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(email);
-        // userEntity.setUsername(usernmae);
-        userEntity.setPassword("temppassword");
-        userEntity.setRole(role);
-
-        //UserDetails에 회원 정보 객체 담기
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
+        // 다음 필터로 요청 전달
         filterChain.doFilter(request, response);
     }
 }

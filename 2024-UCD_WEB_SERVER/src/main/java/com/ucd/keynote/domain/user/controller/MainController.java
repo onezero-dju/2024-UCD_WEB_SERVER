@@ -18,36 +18,14 @@ public class MainController {
 
     @GetMapping("/")
     public String mainP() {
-
-
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-
-
-
-        String email = null;
-        // String username = null;
-
-        // 현재 인증된 사용자 정보 가져오기
+// 현재 인증된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            // 이메일을 바로 가져오기
-            if (userDetails instanceof CustomUserDetails) { // CustomUserDetails는 커스텀 유저 클래스 이름입니다.
-                email = ((CustomUserDetails) userDetails).getEmail();
-                // username = ((CustomUserDetails) userDetails).getUsername();
-            } else {
-                // userDetails.getUsername()이 이메일이라면 이 코드 사용
-                email = userDetails.getUsername();
-            }
-        }
+        // 사용자 이메일과 역할 가져오기
+        String email = authentication.getName(); // 인증 객체의 name은 이메일이 됩니다.
+        String role = authentication.getAuthorities().iterator().next().getAuthority(); // 권한 중 첫 번째 권한을 가져옴
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
-
-        return "main Controller " + email + role;
+        // 이메일과 역할을 포함한 메시지 반환
+        return "User email: " + email + ", Role: " + role;
     }
 }

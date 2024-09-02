@@ -43,7 +43,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
+    @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000")); // 허용할 출처
@@ -64,17 +64,16 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/", "api/users/signup").permitAll()  // 이 경로에 대한 접근 허용
+                        .requestMatchers("/login", "/", "/api/users/signup").permitAll()  // 이 경로에 대한 접근 허용
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless 설정
         http
                 .csrf(AbstractHttpConfigurer::disable);  // CSRF 보호 비활성화
-        //JWTFilter 등록
+        // JWTFilter 등록
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
