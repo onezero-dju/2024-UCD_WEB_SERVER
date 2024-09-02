@@ -17,6 +17,9 @@ public class JWTUtil {
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
+    public String getUserName(String token){
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
 
     // 검증 메서드
     public String getEmail(String token) {
@@ -39,10 +42,13 @@ public class JWTUtil {
 
         return Jwts.builder()
                 .claim("email", email)
+                // .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
     }
+
+
 }
