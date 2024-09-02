@@ -22,10 +22,12 @@ public class MainController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 사용자 이메일과 역할 가져오기
-        String email = authentication.getName(); // 인증 객체의 name은 이메일이 됩니다.
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String email = userDetails.getEmail(); // 인증 객체의 name은 이메일이 됩니다.
+        String username = userDetails.getUsername();
         String role = authentication.getAuthorities().iterator().next().getAuthority(); // 권한 중 첫 번째 권한을 가져옴
 
         // 이메일과 역할을 포함한 메시지 반환
-        return "User email: " + email + ", Role: " + role;
+        return "User email: " + email + ", Role: " + role + ", User name: " + username;
     }
 }

@@ -1,5 +1,7 @@
 package com.ucd.keynote.domain.jwt;
 
+import com.ucd.keynote.domain.user.dto.CustomUserDetails;
+import com.ucd.keynote.domain.user.entity.UserEntity;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -50,11 +52,21 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰에서 사용자 정보 추출
         String email = jwtUtil.getEmail(token);
+        String username = jwtUtil.getUserName(token);
         String role = jwtUtil.getRole(token);
+
+        // UserEntity 객체 생성 (또는 로드)
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(email);
+        userEntity.setUsername(username);
+        userEntity.setRole(role);
+
+        // CustomUserDetails 객체 생성
+        CustomUserDetails userDetails = new CustomUserDetails(userEntity);
 
         // 인증 객체 생성 및 컨텍스트에 설정
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(email, null, jwtUtil.getAuthorities(role));
+                new UsernamePasswordAuthenticationToken(userDetails, null, jwtUtil.getAuthorities(role));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 다음 필터로 요청 전달
