@@ -27,11 +27,6 @@ public class OrganizationController {
         // 인증된 사용자 정보 가져오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUserEntity().getUserId();
-        System.out.println(userDetails);
-
-        // 사용자 이메일과 역할 가져오기
-        String email = userDetails.getEmail(); // 인증 객체의 name은 이메일이 됩니다.
-        System.out.println(email);
 
         // 서비스 계층에서 조직 생성 처리
         Organization organization = organizationService.createOrganization(request.getOrganizationName(), request.getDescription(), userId);
