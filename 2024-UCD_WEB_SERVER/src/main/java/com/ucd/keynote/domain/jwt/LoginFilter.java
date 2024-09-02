@@ -2,6 +2,7 @@ package com.ucd.keynote.domain.jwt;
 
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,6 +54,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 토큰 생성
         String token = jwtUtil.createJwt(email, role, 60*60*10L); // jwt가 살아 있을 시간
+
+        // 쿠키 생성 및 설정
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true); // XSS 공격 방지
+        cookie.setSecure(false); // HTTPS 환경에서만 전송
+        cookie.setPath("/"); // 애플리케이션 전체에 쿠키가 유효
+        cookie.setMaxAge(60 * 60 * 10); // 쿠키 유효 시간 (JWT 유효 시간과 동일)
+
+        // 쿠키를 응답에 추가
+        response.addCookie(cookie);
 
         // 토큰 응답
         response.addHeader("Authorization", "Bearer " + token);
