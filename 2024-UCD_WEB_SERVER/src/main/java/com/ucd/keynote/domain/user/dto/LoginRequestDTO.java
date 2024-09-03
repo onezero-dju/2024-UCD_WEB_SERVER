@@ -1,12 +1,11 @@
 package com.ucd.keynote.domain.user.dto;
 
-import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginRequest {
+public class LoginRequestDTO {
     private String email;
     private String password;
 }

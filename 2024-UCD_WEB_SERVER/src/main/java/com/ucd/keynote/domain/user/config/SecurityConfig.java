@@ -3,6 +3,7 @@ package com.ucd.keynote.domain.user.config;
 import com.ucd.keynote.domain.jwt.JWTFilter;
 import com.ucd.keynote.domain.jwt.JWTUtil;
 import com.ucd.keynote.domain.jwt.LoginFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,15 +24,11 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-
-        this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -64,7 +61,7 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/", "/api/users/signup", "api/organizations").permitAll()  // 이 경로에 대한 접근 허용
+                        .requestMatchers("/api/users/login", "/", "/api/users/signup", "/api/organizations").permitAll()  // 이 경로에 대한 접근 허용
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

@@ -1,6 +1,6 @@
 package com.ucd.keynote.domain.user.controller;
 
-import com.ucd.keynote.domain.user.dto.ApiResponseDTO;
+import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import org.springframework.http.ResponseEntity;
