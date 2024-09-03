@@ -1,6 +1,8 @@
 package com.ucd.keynote.domain.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
+import com.ucd.keynote.domain.user.dto.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,12 +14,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 처리를 위한 ObjectMapper
+
 
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
@@ -26,21 +31,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        //클라이언트 요청에서 email, password 추출
-        String email = request.getParameter("email");
-        String password = obtainPassword(request);
-        System.out.println(email);
+        // 클라이언트 요청에서 JSON 본문을 추출하여 이메일과 패스워드를 읽어들임
+        try {
+            LoginRequest loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
 
-        //스프링 시큐리티에서 email과 password를 검증하기 위해서는 token에 담아야 함
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
+            // 스프링 시큐리티에서 이메일과 패스워드를 검증하기 위해 토큰에 담아야 함
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword(), null);
 
-        //token에 담은 검증을 위한 AuthenticationManager로 전달
-        return authenticationManager.authenticate(authToken);
+            // 토큰에 담은 검증을 위한 AuthenticationManager로 전달
+            return authenticationManager.authenticate(authToken);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String email = customUserDetails.getEmail();
@@ -54,7 +61,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 토큰 생성
-        String token = jwtUtil.createJwt(email, username, role, userId,60*60*10L); // jwt가 살아 있을 시간
+        String token = jwtUtil.createJwt(email, username, role, userId, 60 * 60 * 10L); // jwt가 살아 있을 시간
 
         // 쿠키 생성 및 설정
         Cookie cookie = new Cookie("token", token);
@@ -65,7 +72,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 쿠키를 응답에 추가
         response.addCookie(cookie);
-
         // 토큰 응답
         // response.addHeader("Authorization", "Bearer " + token);
     }

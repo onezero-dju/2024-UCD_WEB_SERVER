@@ -23,7 +23,7 @@ public class OrganizationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrganization(OrganizationRequest request, Authentication authentication) {
+    public ResponseEntity<?> createOrganization(@RequestBody OrganizationRequest request, Authentication authentication) {
         // 인증된 사용자 정보 가져오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUserEntity().getUserId();

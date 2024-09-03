@@ -20,7 +20,7 @@ public class JoinController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/signup")
-    public String joinProcess(JoinDTO joinDTO) {
+    public String joinProcess(@RequestBody JoinDTO joinDTO) {
 
         System.out.println(joinDTO.getUsername());
         System.out.println(joinDTO.getEmail());

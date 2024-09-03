@@ -1,28 +1,38 @@
 package com.ucd.keynote.domain.user.controller;
 
-import com.ucd.keynote.domain.user.dto.UserDTO;
-import com.ucd.keynote.domain.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.ucd.keynote.domain.user.dto.ApiResponseDTO;
+import com.ucd.keynote.domain.user.dto.CustomUserDetails;
+import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final UserService userService;
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponseDTO<UserResponseDTO>> getCurrentUser() {
+        // SecurityContextHolder에서 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-    @Autowired
-    public UserController(UserService userService){
-        this.userService = userService;
-    }
+        // UserResponseDTO 객체 생성
+        UserResponseDTO userResponse = UserResponseDTO.builder()
+                .userId(userDetails.getUserEntity().getUserId())
+                .userName(userDetails.getUsername())
+                .email(userDetails.getEmail())
+                .role(userDetails.getUserEntity().getRole())
+                .build();
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDto){
-        UserDTO createdUser = userService.registerUser(userDto);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        // ApiResponseDTO 객체 생성
+        ApiResponseDTO<UserResponseDTO> response = ApiResponseDTO.<UserResponseDTO>builder()
+                .code(200)
+                .message("success")
+                .data(userResponse)
+                .build();
+
+        // 응답 반환
+        return ResponseEntity.ok(response);
     }
 }
