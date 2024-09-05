@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.jwt;
+package com.ucd.keynote.domain.user.jwt;
 
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;

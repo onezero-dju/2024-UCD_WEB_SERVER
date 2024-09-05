@@ -1,13 +1,12 @@
-package com.ucd.keynote.domain.user.config;
+package com.ucd.keynote.domain.config;
 
-import com.ucd.keynote.domain.jwt.JWTFilter;
-import com.ucd.keynote.domain.jwt.JWTUtil;
-import com.ucd.keynote.domain.jwt.LoginFilter;
+import com.ucd.keynote.domain.user.jwt.JWTFilter;
+import com.ucd.keynote.domain.user.jwt.JWTUtil;
+import com.ucd.keynote.domain.user.jwt.LoginFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

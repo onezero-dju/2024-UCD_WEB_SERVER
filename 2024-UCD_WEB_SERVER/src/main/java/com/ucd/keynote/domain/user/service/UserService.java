@@ -1,13 +1,11 @@
 package com.ucd.keynote.domain.user.service;
 
 import com.ucd.keynote.domain.common.service.AuthService;
-import com.ucd.keynote.domain.user.dto.JoinDTO;
-import com.ucd.keynote.domain.user.dto.UserDTO;
+import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +30,7 @@ public class UserService {
                 .build();
     }
 
-    public void userSign(JoinDTO joinDTO) {
+    public void userSign(SignUpRequestDTO joinDTO) {
 
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();

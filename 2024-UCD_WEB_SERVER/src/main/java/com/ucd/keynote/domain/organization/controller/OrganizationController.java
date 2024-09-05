@@ -1,11 +1,14 @@
 package com.ucd.keynote.domain.organization.controller;
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
+import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.OrganizationRequest;
+import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
 import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,24 +18,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/organizations")
 public class OrganizationController {
     private final OrganizationService organizationService;
+    private final AuthService authService;
 
-    public OrganizationController(OrganizationService organizationService){
-        this.organizationService = organizationService;
-    }
 
     @PostMapping
-    public ResponseEntity<?> createOrganization(@RequestBody OrganizationRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponseDTO<OrganizationResponseDTO>> createOrganization(@RequestBody OrganizationRequest request, Authentication authentication) {
         // 인증된 사용자 정보 가져오기
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getUserEntity().getUserId();
+        Long userId = authService.getAuthenticatedUser().getUserId();
 
         // 서비스 계층에서 조직 생성 처리
-        Organization organization = organizationService.createOrganization(request.getOrganizationName(), request.getDescription(), userId);
+        ApiResponseDTO<OrganizationResponseDTO> response = organizationService.createOrganization(request.getOrganizationName(), request.getDescription(), userId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(organization);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/my")

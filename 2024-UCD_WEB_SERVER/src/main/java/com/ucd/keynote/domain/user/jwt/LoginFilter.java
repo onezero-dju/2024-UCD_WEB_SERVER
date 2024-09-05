@@ -1,15 +1,14 @@
-package com.ucd.keynote.domain.jwt;
+package com.ucd.keynote.domain.user.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucd.keynote.domain.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.dto.LoginRequestDTO;
-import com.ucd.keynote.domain.user.dto.LoginResponseDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -73,7 +72,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.addCookie(cookie);
 
             // 응답 객체 생성
-            LoginResponseDTO loginResponse = LoginResponseDTO.builder()
+            NoDataApiResponseDTO loginResponse = NoDataApiResponseDTO.builder()
                     .code(200)
                     .message("success signUp")
                     .build();
