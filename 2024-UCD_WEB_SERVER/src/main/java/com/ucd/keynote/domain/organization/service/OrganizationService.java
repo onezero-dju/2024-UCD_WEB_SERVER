@@ -1,16 +1,23 @@
 package com.ucd.keynote.domain.organization.service;
 
 
+import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.entity.UserOrganizationId;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
 import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
+import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrganizationService {
@@ -25,6 +32,7 @@ public class OrganizationService {
         this.userRepository = userRepository;
     }
 
+    // 조직 생성 서비스
     public Organization createOrganization(String organizationName, String description, Long userId) {
         // 조직 이름이 중복되지 않도록 검사
         if (organizationRepository.existsByOrganizationName(organizationName)) {
@@ -62,4 +70,29 @@ public class OrganizationService {
 
         return organization;
     }
+
+    //사용자 속한 조직 정보 가져오기
+    public List<UserOrganizationDTO> getUserOrganization() {
+        // 현재 인증된 사용자 정보 받아오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+        // 로그인 된 사용자 아이디
+        Long userId = userDetails.getUserEntity().getUserId();
+
+        // 사용자가 속한 조직 정보 가져오기
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findByUser_UserId(userId);
+
+        return userOrganizations.stream()
+                .map(userOrg -> UserOrganizationDTO.builder()
+                        .organizationId(userOrg.getOrganization().getOrganizationId())
+                        .organizationName(userOrg.getOrganization().getOrganizationName())
+                        .description(userOrg.getOrganization().getDescription())
+                        .role(userOrg.getRole())
+                        .joinedAt(userOrg.getJoinedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+    }
+
 }

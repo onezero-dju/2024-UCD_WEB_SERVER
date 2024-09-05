@@ -1,6 +1,8 @@
 package com.ucd.keynote.domain.organization.controller;
 
+import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.organization.dto.OrganizationRequest;
+import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
@@ -8,10 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/organizations")
@@ -32,5 +33,18 @@ public class OrganizationController {
         Organization organization = organizationService.createOrganization(request.getOrganizationName(), request.getDescription(), userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(organization);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<ApiResponseDTO<List<UserOrganizationDTO>>> getUserOrganizations(){
+        List<UserOrganizationDTO> userOrganizations = organizationService.getUserOrganization();
+
+        ApiResponseDTO<List<UserOrganizationDTO>> response = ApiResponseDTO.<List<UserOrganizationDTO>>builder()
+                .code(200)
+                .message("success")
+                .data(userOrganizations)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
