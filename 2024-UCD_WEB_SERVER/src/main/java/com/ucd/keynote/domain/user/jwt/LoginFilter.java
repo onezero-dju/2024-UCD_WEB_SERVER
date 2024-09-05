@@ -61,14 +61,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
             // JWT 토큰 생성
-            String token = jwtUtil.createJwt(email, username, role, userId, 60 * 60 * 10L);
+            String token = jwtUtil.createJwt(email, username, role, userId, 60 * 60 * 19L);
 
             // 쿠키 생성 및 설정
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
             cookie.setSecure(false);
             cookie.setPath("/");
-            cookie.setMaxAge(60 * 60 * 10);
+            cookie.setMaxAge(60 * 60 * 19);
             response.addCookie(cookie);
 
             // 응답 객체 생성
