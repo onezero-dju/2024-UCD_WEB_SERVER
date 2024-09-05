@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface UserOrganizationRepository extends JpaRepository<UserOrganization, UserOrganizationId> {
     List<UserOrganization> findByUser_UserId(Long userId);
+
+    List<UserOrganization> findByOrganization_OrganizationId(Long organizationId);
 }

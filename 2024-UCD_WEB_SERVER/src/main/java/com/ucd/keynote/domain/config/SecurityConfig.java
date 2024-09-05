@@ -60,8 +60,8 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/", "/api/users/signup", "/api/organizations").permitAll()  // 이 경로에 대한 접근 허용
-                        .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
+                        .requestMatchers("/api/users/login", "/", "/api/users/signup").permitAll()  // 이 경로에 대한 접근 허용
+                        .requestMatchers("/admin", "/api/organizations/**").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless 설정

@@ -4,6 +4,7 @@ import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.OrganizationRequest;
 import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
+import com.ucd.keynote.domain.organization.dto.OrganizationUserDTO;
 import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
@@ -44,6 +45,19 @@ public class OrganizationController {
                 .code(200)
                 .message("success")
                 .data(userOrganizations)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{organizationId}/users")
+    public ResponseEntity<ApiResponseDTO<List<OrganizationUserDTO>>> getUsersByOrganization(@PathVariable Long organizationId) {
+        List<OrganizationUserDTO> users = organizationService.getUsersByOrganizationId(organizationId);
+
+        ApiResponseDTO<List<OrganizationUserDTO>> response = ApiResponseDTO.<List<OrganizationUserDTO>>builder()
+                .code(200)
+                .message("success")
+                .data(users)
                 .build();
 
         return ResponseEntity.ok(response);

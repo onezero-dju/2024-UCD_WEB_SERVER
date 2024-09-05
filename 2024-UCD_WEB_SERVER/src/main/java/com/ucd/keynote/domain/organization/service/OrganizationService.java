@@ -3,6 +3,7 @@ package com.ucd.keynote.domain.organization.service;
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
+import com.ucd.keynote.domain.organization.dto.OrganizationUserDTO;
 import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
@@ -102,6 +103,21 @@ public class OrganizationService {
                         .build())
                 .collect(Collectors.toList());
 
+    }
+
+    // 조직 멤버 정보 가져오기
+    public List<OrganizationUserDTO> getUsersByOrganizationId(Long organizationId){
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findByOrganization_OrganizationId(organizationId);
+
+        return userOrganizations.stream()
+                .map(userOrganization -> OrganizationUserDTO.builder()
+                        .userId(userOrganization.getUser().getUserId())
+                        .userName(userOrganization.getUser().getUsername())
+                        .email(userOrganization.getUser().getEmail())
+                        .role(userOrganization.getRole())
+                        .joinedAt(userOrganization.getJoinedAt())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
 }
