@@ -19,17 +19,19 @@ public class UserService {
     // 사용자 정보 가져오기
     public UserResponseDTO getCurrentUser(){
         // 로그인 된 사용자 정보 가져오기
-        UserEntity authenticateUser = authService.getAuthenticatedUser();
+        UserEntity user = authService.getAuthenticatedUser();
 
         // UserResponseDTO 객체 생성 후 반환
         return UserResponseDTO.builder()
-                .userId(authenticateUser.getUserId())
-                .userName(authenticateUser.getUsername())
-                .email(authenticateUser.getEmail())
-                .role(authenticateUser.getRole())
+                .userId(user.getUserId())
+                .userName(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 
+    // 회원 가입
     public void userSign(SignUpRequestDTO joinDTO) {
 
         String username = joinDTO.getUsername();
@@ -53,5 +55,19 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public UserResponseDTO getUserById(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return UserResponseDTO.builder()
+                .userId(user.getUserId())
+                .userName(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .createdAt(user.getCreatedAt())
+                .build();
+    }
+
 
 }

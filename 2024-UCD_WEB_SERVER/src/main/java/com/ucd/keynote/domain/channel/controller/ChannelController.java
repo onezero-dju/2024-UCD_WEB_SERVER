@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/organizations")
@@ -33,6 +35,21 @@ public class ChannelController {
                 .build();
 
         return ResponseEntity.status(201).body(response);
+    }
+
+    @GetMapping("/{organizationId}/channels")
+    public ResponseEntity<ApiResponseDTO<List<ChannelResponseDTO>>> getChannelsByOrganization (
+            @PathVariable Long organizationId
+    ){
+        List<ChannelResponseDTO> channels = channelService.getChannelByOrganizationId(organizationId);
+
+        ApiResponseDTO<List<ChannelResponseDTO>> response = ApiResponseDTO.<List<ChannelResponseDTO>>builder()
+                .code(200)
+                .message("success")
+                .data(channels)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -14,7 +14,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.nio.channels.AcceptPendingException;
+import java.security.PublicKey;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +27,7 @@ public class ChannelService {
     private final UserOrganizationRepository userOrganizationRepository;
     private final UserService userService;
 
-    // 조직 생성
+    // 채널 생성
     public ChannelResponseDTO createdChannel(ChannelRequestDTO request, Long organizationId, Long userId){
         // 조직 존재 여부 확인
         Organization organization = organizationRepository.findById(organizationId)
@@ -53,11 +56,24 @@ public class ChannelService {
                 .channelId(channel.getChannelId())
                 .name(channel.getName())
                 .description(channel.getDescription())
-                .organizationId(organization.getOrganizationId())
-                .createdAt(channel.getCreatedAt().toString())
+                .createdAt(channel.getCreatedAt())
                 .build();
 
         return response;
+    }
+
+    // 조직안 채널 정보 조회
+    public List<ChannelResponseDTO> getChannelByOrganizationId(Long organizationId){
+        List<Channel> channels = channelRepository.findByOrganization_OrganizationId(organizationId);
+
+        return channels.stream()
+                .map(channel -> ChannelResponseDTO.builder()
+                        .channelId(channel.getChannelId())
+                        .name(channel.getName())
+                        .description(channel.getDescription())
+                        .createdAt(channel.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

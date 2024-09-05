@@ -119,5 +119,6 @@ public class OrganizationService {
                         .build()
                 ).collect(Collectors.toList());
     }
+    // 사용자가 속한 조직 목록 조회
 
 }
