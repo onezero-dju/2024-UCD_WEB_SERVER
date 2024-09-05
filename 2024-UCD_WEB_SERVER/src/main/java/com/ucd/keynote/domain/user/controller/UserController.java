@@ -2,6 +2,7 @@ package com.ucd.keynote.domain.user.controller;
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
+import com.ucd.keynote.domain.user.dto.JoinDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,15 @@ public class UserController {
                 .message("success")
                 .data(userResponse)
                 .build();
-        
+
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/signup")
+    public String joinProcess(@RequestBody JoinDTO joinDTO) {
+
+        userService.userSign(joinDTO);
+
+        return "ok";
     }
 }
