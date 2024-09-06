@@ -47,7 +47,7 @@ public class ChannelService {
         channel.setDescription(request.getDescription());
         channel.setOrganization(organization);
         channel.setCreatedAt(LocalDateTime.now());
-        channel.setUpdateAt(LocalDateTime.now());
+        channel.setUpdatedAt(LocalDateTime.now());
 
         // 채널 저장
         channelRepository.save(channel);
@@ -58,6 +58,7 @@ public class ChannelService {
                 .name(channel.getName())
                 .description(channel.getDescription())
                 .createdAt(channel.getCreatedAt())
+                .updatedAt(channel.getUpdatedAt())
                 .build();
 
         return response;

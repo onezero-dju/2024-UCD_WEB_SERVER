@@ -1,5 +1,6 @@
 package com.ucd.keynote.domain.channel.entity;
 
+import com.ucd.keynote.domain.common.entity.BaseEntity;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Table(name = "channel")
-public class Channel {
+public class Channel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "channel_id")
@@ -26,7 +27,7 @@ public class Channel {
     private Organization organization;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name = "update_at")
-    private  LocalDateTime updateAt;
+    @Column(name = "updated_at")
+    private  LocalDateTime updatedAt;
 
 }

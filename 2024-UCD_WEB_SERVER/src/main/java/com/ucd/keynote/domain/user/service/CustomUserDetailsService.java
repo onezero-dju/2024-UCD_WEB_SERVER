@@ -25,12 +25,5 @@ public class CustomUserDetailsService implements UserDetailsService {
         return null;
     }
 
-    /*public UserDetails loadUserByEmail(String email){
-        UserEntity userData = userRepository.findByEmail(email);
-        if(userData != null){
-            return new CustomUserDetails(userData);
-        }
-        return null;
-    }*/
 
 }

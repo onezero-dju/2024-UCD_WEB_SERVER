@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JWTFilter extends OncePerRequestFilter {
@@ -62,6 +63,8 @@ public class JWTFilter extends OncePerRequestFilter {
         userEntity.setEmail(email);
         userEntity.setUsername(username);
         userEntity.setRole(role);
+        userEntity.setCreatedAt(LocalDateTime.now());
+        userEntity.setUpdatedAt(LocalDateTime.now());
 
         // CustomUserDetails 객체 생성
         CustomUserDetails userDetails = new CustomUserDetails(userEntity);

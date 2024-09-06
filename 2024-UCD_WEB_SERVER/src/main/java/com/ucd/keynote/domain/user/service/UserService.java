@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -20,6 +22,8 @@ public class UserService {
     public UserResponseDTO getCurrentUser(){
         // 로그인 된 사용자 정보 가져오기
         UserEntity user = authService.getAuthenticatedUser();
+        System.out.println(user.getCreatedAt());
+        System.out.println(user.getUpdatedAt());
 
         // UserResponseDTO 객체 생성 후 반환
         return UserResponseDTO.builder()
@@ -52,6 +56,8 @@ public class UserService {
         user.setPassword(bCryptPasswordEncoder.encode(password)); // 암호화를 진행하여 저장
         user.setEmail(email);
         user.setRole("ROLE_ADMIN");
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
     }
