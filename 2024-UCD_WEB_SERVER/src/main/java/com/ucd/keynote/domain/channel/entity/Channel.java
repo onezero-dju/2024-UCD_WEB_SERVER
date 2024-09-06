@@ -26,5 +26,7 @@ public class Channel {
     private Organization organization;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "update_at")
+    private  LocalDateTime updateAt;
 
 }

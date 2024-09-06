@@ -29,7 +29,7 @@ public class UserOrganization {
     @Column(name = "role", nullable = false)
     private String role;
 
-    @Column(name = "joined_at")
+    @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;
 
 }

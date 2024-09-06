@@ -24,13 +24,16 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(name = "oauth_id")
     private String oauthId;
 
     @Column(nullable = false)
     private String role;
+
+    @Column(name = "profile_image")
+    private String profileImage;
 
 }
