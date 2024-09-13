@@ -10,7 +10,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "category")
+// 채널 내에서 유일한 속성을 가짐
+@Table(name = "category", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "channel_id"})})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,8 +21,8 @@ public class Category extends BaseEntity {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @Column(name = "category_name", nullable = false)
-    private String categoryName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id", nullable = false)

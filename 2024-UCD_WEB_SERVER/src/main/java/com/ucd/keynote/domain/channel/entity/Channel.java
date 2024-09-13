@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "channel")
+@Table(name = "channel", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "organization_id"})})
 public class Channel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
