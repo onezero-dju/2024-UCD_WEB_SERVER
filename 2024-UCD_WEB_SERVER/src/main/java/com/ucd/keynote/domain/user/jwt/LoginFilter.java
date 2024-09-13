@@ -71,6 +71,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             cookie.setMaxAge(60 * 60 * 19);
             response.addCookie(cookie);
 
+            // 헤더에 토큰 추가
+            response.addHeader("Authorization", "Bearer " + token);
+
             // 응답 객체 생성
             NoDataApiResponseDTO loginResponse = NoDataApiResponseDTO.builder()
                     .code(200)
