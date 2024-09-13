@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/login", "/", "/api/users/signup").permitAll()  // 이 경로에 대한 접근 허용
-                        .requestMatchers("/admin", "/api/organizations/**").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
+                        .requestMatchers("/admin", "/api/organizations/**", "/api/channels/**").hasRole("ADMIN") // ADMIN 가진 사용자만 접속 가능
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless 설정

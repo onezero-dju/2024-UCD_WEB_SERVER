@@ -30,4 +30,6 @@ public class Category extends BaseEntity {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }
