@@ -3,6 +3,7 @@ package com.ucd.keynote.domain.user.service;
 import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
+import com.ucd.keynote.domain.user.dto.UsernameUpdateResponseDTO;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -14,28 +15,12 @@ import java.time.LocalDateTime;
 @Service
 @AllArgsConstructor
 public class UserService {
-    private final AuthService authService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthService authService;
 
-    // 사용자 정보 가져오기
-    public UserResponseDTO getCurrentUser(){
-        // 로그인 된 사용자 정보 가져오기
-        UserEntity user = authService.getAuthenticatedUser();
-        System.out.println(user.getCreatedAt());
-        System.out.println(user.getUpdatedAt());
 
-        // UserResponseDTO 객체 생성 후 반환
-        return UserResponseDTO.builder()
-                .userId(user.getUserId())
-                .userName(user.getUsername())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt())
-                .build();
-    }
-
-    // 회원 가입
+    // 회원 가입 서비스
     public void userSign(SignUpRequestDTO joinDTO) {
 
         String username = joinDTO.getUsername();
@@ -62,6 +47,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // 사용자 정보 가져오기
     public UserResponseDTO getUserById(Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -75,5 +61,24 @@ public class UserService {
                 .build();
     }
 
+    // 사용자 이름 변경 서비스
+    public UsernameUpdateResponseDTO updateUsername(String newUsername){
+        // 현재 로그인 한 사용자 정보 받아오기
+        Long userId = authService.getAuthenticatedUser().getUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 새로운 사용자 이름 설정
+        user.setUsername(newUsername);
+
+        // DB에 저장
+        userRepository.save(user);
+
+        // 응답 객체 생성
+        return UsernameUpdateResponseDTO.builder()
+                .userId(user.getUserId())
+                .newUsername(user.getUsername())
+                .build();
+    }
 
 }

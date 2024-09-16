@@ -7,6 +7,8 @@ import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.common.service.CombinedService;
 import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
+import com.ucd.keynote.domain.user.dto.UsernameUpdateRequestDTO;
+import com.ucd.keynote.domain.user.dto.UsernameUpdateResponseDTO;
 import com.ucd.keynote.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,9 @@ public class UserController {
     // 로그인 한 회원정보 불러오기
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDTO<UserResponseDTO>> getCurrentUser() {
-        UserResponseDTO userResponse = userService.getCurrentUser();
+        Long userId = authService.getAuthenticatedUser().getUserId();
+
+        UserResponseDTO userResponse = userService.getUserById(userId);
 
         ApiResponseDTO<UserResponseDTO> response = ApiResponseDTO.<UserResponseDTO>builder()
                 .code(200)
@@ -50,6 +54,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    // 홈화면 정보 가져오기
     @GetMapping("/home")
     public ResponseEntity<ApiResponseDTO<CombinedResponseDTO>> getUserOrganizationAndChannel(){
         // 현재 인증된 사용자 정보 가져오기
@@ -67,6 +72,23 @@ public class UserController {
 
         // 응답 반환
         return ResponseEntity.ok(response);
+    }
+
+    // 사용자 이름 변경
+    @PutMapping("/me/username")
+    public ResponseEntity<ApiResponseDTO<UsernameUpdateResponseDTO>> updateUsername(@RequestBody UsernameUpdateRequestDTO request){
+
+        // 인증된 사용자 이름 변경 서비스 호출
+        UsernameUpdateResponseDTO updateUser = userService.updateUsername(request.getNewUsername());
+
+        // 응답 생성
+        ApiResponseDTO<UsernameUpdateResponseDTO> response = ApiResponseDTO.<UsernameUpdateResponseDTO>builder()
+                .code(200)
+                .message("Username updated successfully")
+                .data(updateUser)
+                .build();
+        return ResponseEntity.ok(response);
+
     }
 
 }
