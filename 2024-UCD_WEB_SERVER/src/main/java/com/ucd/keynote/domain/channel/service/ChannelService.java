@@ -86,17 +86,23 @@ public class ChannelService {
 
         // 채널 존재 여부 확인
         Channel channel = channelRepository.findById(channelId)
-                .orElseThrow(() -> new IllegalArgumentException("Channel not found"));
+                .orElseThrow(() -> new IllegalArgumentException("채널을 찾을 수 없습니다."));
 
         // 사용자가 속한 조직에서의 역할 확인
         UserOrganization userOrganization = userOrganizationRepository
                 .findByOrganization_OrganizationIdAndUser_UserId(channel.getOrganization().getOrganizationId(), currentUser.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not part of the organization"));
 
-        // 관리자인지 확인(admin 권한을 가진 사용자만 채널 이름을 변경할 수 있음)
+        // 관리자인지 확인(admin 권한을 가진 사용자만 채널 정보를 수정할 수 있음)
         if(!"admin".equals(userOrganization.getRole())){
-            throw new AccessDeniedException("Only admins can update channel name");
+            throw new AccessDeniedException("관리자만 채널 정보를 수정할 수 있습니다.");
         }
+        // 조직 내에서 중복된 채널 이름 확인
+        if (channelRepository.existsByNameAndOrganization_OrganizationId(request.getNewName(), channel.getOrganization().getOrganizationId())) {
+            throw new IllegalArgumentException("해당 조직 내에서 같은 이름의 채널이 이미 존재합니다.");
+        }
+
+
 
         // 채널 이름과 설명 변경
         channel.setName(request.getNewName());
