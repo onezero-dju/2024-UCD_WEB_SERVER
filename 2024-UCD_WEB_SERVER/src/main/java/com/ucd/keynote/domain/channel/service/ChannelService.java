@@ -1,20 +1,20 @@
 package com.ucd.keynote.domain.channel.service;
 
+import com.ucd.keynote.domain.channel.dto.ChannelUpdateRequestDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelRequestDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelResponseDTO;
 import com.ucd.keynote.domain.channel.entity.Channel;
 import com.ucd.keynote.domain.channel.repository.ChannelRepository;
+import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
 import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
-import com.ucd.keynote.domain.user.service.UserService;
+import com.ucd.keynote.domain.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.nio.channels.AcceptPendingException;
-import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,8 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
     private final OrganizationRepository organizationRepository;
     private final UserOrganizationRepository userOrganizationRepository;
-    private final UserService userService;
+    private final AuthService authService;
+
 
     // 채널 생성
     public ChannelResponseDTO createdChannel(ChannelRequestDTO request, Long organizationId, Long userId){
@@ -76,6 +77,43 @@ public class ChannelService {
                         .createdAt(channel.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // 채널 정보 수정
+    public ChannelResponseDTO updateChannelName(Long channelId, ChannelUpdateRequestDTO request){
+        // 로그인 한 사용자 정보 가져오기
+        UserEntity currentUser = authService.getAuthenticatedUser();
+
+        // 채널 존재 여부 확인
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new IllegalArgumentException("Channel not found"));
+
+        // 사용자가 속한 조직에서의 역할 확인
+        UserOrganization userOrganization = userOrganizationRepository
+                .findByOrganization_OrganizationIdAndUser_UserId(channel.getOrganization().getOrganizationId(), currentUser.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not part of the organization"));
+
+        // 관리자인지 확인(admin 권한을 가진 사용자만 채널 이름을 변경할 수 있음)
+        if(!"admin".equals(userOrganization.getRole())){
+            throw new AccessDeniedException("Only admins can update channel name");
+        }
+
+        // 채널 이름과 설명 변경
+        channel.setName(request.getNewName());
+        channel.setDescription(request.getNewDescription());
+        channel.setUpdatedAt(LocalDateTime.now());
+
+        // 변경 사항 저장
+        channelRepository.save(channel);
+
+        //응답 객체 생성
+        return ChannelResponseDTO.builder()
+                .channelId(channel.getChannelId())
+                .name(channel.getName())
+                .description(channel.getDescription())
+                .createdAt(channel.getCreatedAt())
+                .updatedAt(channel.getUpdatedAt())
+                .build();
     }
 
 }
