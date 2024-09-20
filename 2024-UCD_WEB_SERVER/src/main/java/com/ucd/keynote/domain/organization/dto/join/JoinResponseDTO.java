@@ -9,12 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class JoinRequestResponseDTO {
+public class JoinResponseDTO {
     private Long requestId;
-    private Long userId;
-    private String userName;
-    private String message;
+    private Long organizationId;
     private String status;
-    private LocalDateTime requestedAt;
+    private LocalDateTime createdAt;
 }
-
