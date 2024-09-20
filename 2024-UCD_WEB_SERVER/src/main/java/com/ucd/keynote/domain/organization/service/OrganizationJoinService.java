@@ -2,6 +2,7 @@ package com.ucd.keynote.domain.organization.service;
 
 import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.join.JoinRequestDTO;
+import com.ucd.keynote.domain.organization.dto.join.JoinRequestResponseDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.join.OrganizationJoinRequest;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
@@ -9,6 +10,7 @@ import com.ucd.keynote.domain.organization.repository.join.OrganizationJoinRepos
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.mapping.Join;
 import org.springframework.stereotype.Service;
 
 
@@ -21,7 +23,7 @@ public class OrganizationJoinService {
     private final OrganizationRepository organizationRepository;
     private final AuthService authService;
     // 가입 신청 처리
-    public void requestJoinOrganization(Long organizationId, JoinRequestDTO reqeust){
+    public JoinRequestResponseDTO requestJoinOrganization(Long organizationId, JoinRequestDTO reqeust){
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new IllegalArgumentException("조직이 존재하지 않습니다."));
         UserEntity user = authService.getAuthenticatedUser();
@@ -41,5 +43,13 @@ public class OrganizationJoinService {
         joinRequest.setRequestedAt(LocalDateTime.now());
 
         organizationJoinRepository.save(joinRequest);
+
+        // 웅답 DTO 생성
+        return JoinRequestResponseDTO.builder()
+                .requestId(user.getUserId())
+                .organizationId(organization.getOrganizationId())
+                .status(joinRequest.getStatus())
+                .createdAt(joinRequest.getRequestedAt())
+                .build();
     }
 }
