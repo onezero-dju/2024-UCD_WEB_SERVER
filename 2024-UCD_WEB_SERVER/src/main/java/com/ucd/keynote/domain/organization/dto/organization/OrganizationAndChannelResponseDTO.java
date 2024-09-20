@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.organization.dto;
+package com.ucd.keynote.domain.organization.dto.organization;
 
 import com.ucd.keynote.domain.channel.dto.ChannelResponseDTO;
 import lombok.Builder;

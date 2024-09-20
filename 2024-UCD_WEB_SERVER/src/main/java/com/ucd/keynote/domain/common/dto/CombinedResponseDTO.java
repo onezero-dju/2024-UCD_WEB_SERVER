@@ -1,7 +1,6 @@
 package com.ucd.keynote.domain.common.dto;
 
-import com.ucd.keynote.domain.organization.dto.OrganizationAndChannelResponseDTO;
-import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
+import com.ucd.keynote.domain.organization.dto.organization.OrganizationAndChannelResponseDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import lombok.Builder;
 import lombok.Getter;

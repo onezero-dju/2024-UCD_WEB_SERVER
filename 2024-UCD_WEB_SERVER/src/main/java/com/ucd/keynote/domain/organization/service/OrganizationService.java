@@ -2,7 +2,7 @@ package com.ucd.keynote.domain.organization.service;
 
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
-import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
+import com.ucd.keynote.domain.organization.dto.organization.OrganizationResponseDTO;
 import com.ucd.keynote.domain.organization.dto.OrganizationUserDTO;
 import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
@@ -16,7 +16,6 @@ import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

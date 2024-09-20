@@ -2,18 +2,15 @@ package com.ucd.keynote.domain.organization.controller;
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.common.service.AuthService;
-import com.ucd.keynote.domain.organization.dto.OrganizationRequest;
-import com.ucd.keynote.domain.organization.dto.OrganizationResponseDTO;
+import com.ucd.keynote.domain.organization.dto.organization.OrganizationRequest;
+import com.ucd.keynote.domain.organization.dto.organization.OrganizationResponseDTO;
 import com.ucd.keynote.domain.organization.dto.OrganizationUserDTO;
 import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
-import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
-import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
