@@ -55,7 +55,7 @@ public class OrganizationJoinService {
 
         // 웅답 DTO 생성
         return JoinResponseDTO.builder()
-                .requestId(user.getUserId())
+                .requestId(joinRequest.getId())
                 .organizationId(organization.getOrganizationId())
                 .status(joinRequest.getStatus())
                 .createdAt(joinRequest.getRequestedAt())
