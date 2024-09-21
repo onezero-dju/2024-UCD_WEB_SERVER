@@ -1,12 +1,17 @@
 package com.ucd.keynote.domain.organization.controller;
 
 import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
+import com.ucd.keynote.domain.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.join.JoinRequestDTO;
 import com.ucd.keynote.domain.organization.dto.join.JoinRequestResponseDTO;
 import com.ucd.keynote.domain.organization.dto.join.JoinResponseDTO;
+import com.ucd.keynote.domain.organization.entity.UserOrganization;
+import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
 import com.ucd.keynote.domain.organization.service.OrganizationJoinService;
+import com.ucd.keynote.domain.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrganizationJoinController {
     private final OrganizationJoinService organizationJoinService;
+    private final AuthService authService;
+    private final UserOrganizationRepository userOrganizationRepository;
 
     // 가입신청
     @PostMapping("/{organizationId}/join")
@@ -40,6 +47,34 @@ public class OrganizationJoinController {
                 .message("success")
                 .data(joinRequests)
                 .build();
+        return ResponseEntity.ok(response);
+    }
+
+    // 가입 요청 승인
+    @PostMapping("/{organizationId}/join-requests/{requestId}/approve")
+    public ResponseEntity<ApiResponseDTO<Void>> approveJoinRequest(@PathVariable Long organizationId,
+                                                                   @PathVariable Long requestId){
+        System.out.println("orID" + organizationId + "reId" + requestId);
+
+        // 사용자 권한 확인
+        UserEntity userEntity = authService.getAuthenticatedUser();
+        // 해당 조직에 admin 권한이 있는지 확인
+        UserOrganization userOrganization = userOrganizationRepository.findByOrganization_OrganizationIdAndUser_UserId(organizationId, userEntity.getUserId())
+                .orElseThrow(() -> new AccessDeniedException("이 조직에서 권한이 없습니다."));
+        //admin 권한 체크
+        if (!"admin".equals(userOrganization.getRole())) {
+            throw new AccessDeniedException("admin 권한이 있어야 요청을 승인할 수 있습니다.");
+        }
+
+        // 가입 요청 승인 처리
+        organizationJoinService.approveJoniRequest(organizationId, requestId);
+
+        // 응답 생성
+        ApiResponseDTO<Void> response = ApiResponseDTO.<Void>builder()
+                .code(200)
+                .message("가입 요청이 승인이되었습니다.")
+                .build();
+
         return ResponseEntity.ok(response);
     }
 }
