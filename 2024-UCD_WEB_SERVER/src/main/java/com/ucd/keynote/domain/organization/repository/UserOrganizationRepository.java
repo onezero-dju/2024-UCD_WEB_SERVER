@@ -18,4 +18,7 @@ public interface UserOrganizationRepository extends JpaRepository<UserOrganizati
 
     // 조직 ID와 사용자 ID로 UserOrganization 조회
     Optional<UserOrganization> findByOrganization_OrganizationIdAndUser_UserId(Long organizationId, Long userId);
+
+    // 사용자가 특정 조직에 속해 있는지 여부 확인
+    boolean existsByOrganization_OrganizationIdAndUser_UserId(Long organizationId, Long userId);
 }

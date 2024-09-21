@@ -36,6 +36,13 @@ public class OrganizationJoinService {
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new IllegalArgumentException("조직이 존재하지 않습니다."));
         UserEntity user = authService.getAuthenticatedUser();
+
+        // 사용자가 이미 조직에 속해 있는지 확인
+        boolean alreadyInOrganization = userOrganizationRepository.existsByOrganization_OrganizationIdAndUser_UserId(organizationId, user.getUserId());
+        if (alreadyInOrganization) {
+            throw new IllegalStateException("사용자가 이미 조직에 속해 있습니다.");
+        }
+
         // 이미 가입 신청이 존재하는지 확인(PENDING 상태)
         boolean alreadyRequested = organizationJoinRepository.existsByOrganization_OrganizationIdAndUser_UserIdAndStatus
                 (organizationId, user.getUserId(), "PENDING");
