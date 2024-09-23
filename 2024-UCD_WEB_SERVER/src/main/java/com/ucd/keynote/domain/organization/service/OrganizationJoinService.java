@@ -87,6 +87,16 @@ public class OrganizationJoinService {
     // 가입 요청 승인
     @Transactional
     public void approveJoniRequest(Long organizationId, Long requestId){
+        // 사용자 권한 확인
+        UserEntity userEntity = authService.getAuthenticatedUser();
+        // 해당 조직에 admin 권한이 있는지 확인
+        UserOrganization Organization = userOrganizationRepository.findByOrganization_OrganizationIdAndUser_UserId(organizationId, userEntity.getUserId())
+                .orElseThrow(() -> new AccessDeniedException("이 조직에서 권한이 없습니다."));
+        //admin 권한 체크
+        if (!"admin".equals(Organization.getRole())) {
+            throw new AccessDeniedException("admin 권한이 있어야 요청을 승인할 수 있습니다.");
+        }
+
         // 가입 요청 가져오기
         OrganizationJoinRequest joinRequest = organizationJoinRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("Join request not found"));
