@@ -54,7 +54,6 @@ public class OrganizationJoinController {
     @PostMapping("/{organizationId}/join-requests/{requestId}/approve")
     public ResponseEntity<ApiResponseDTO<Void>> approveJoinRequest(@PathVariable Long organizationId,
                                                                    @PathVariable Long requestId){
-        System.out.println("orID" + organizationId + "reId" + requestId);
 
         // 사용자 권한 확인
         UserEntity userEntity = authService.getAuthenticatedUser();
@@ -72,9 +71,23 @@ public class OrganizationJoinController {
         // 응답 생성
         ApiResponseDTO<Void> response = ApiResponseDTO.<Void>builder()
                 .code(200)
-                .message("가입 요청이 승인이되었습니다.")
+                .message("가입 요청이 승인되었습니다.")
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    // 가입 요청 거절
+    @PostMapping("/{organizationId}/join-requests/{requestId}/reject")
+    public ResponseEntity<ApiResponseDTO<Void>> rejectJoinRequest(@PathVariable Long organizationId,
+                                                                  @PathVariable Long requestId){
+        // 가입 요청 거절
+        organizationJoinService.rejectJoinRequest(organizationId, requestId);
+
+        ApiResponseDTO<Void> response = ApiResponseDTO.<Void>builder()
+                .code(200)
+                .message("가입 요청이 거절 되었습니다.")
+                .build();
+        return ResponseEntity.ok(response); 
     }
 }
