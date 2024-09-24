@@ -47,7 +47,7 @@ public class UserController {
         // 회원가입 성공 응답
         NoDataApiResponseDTO response = NoDataApiResponseDTO.builder()
                 .code(200)
-                .message("success signuUp")
+                .message("success signup")
                 .build();
 
 

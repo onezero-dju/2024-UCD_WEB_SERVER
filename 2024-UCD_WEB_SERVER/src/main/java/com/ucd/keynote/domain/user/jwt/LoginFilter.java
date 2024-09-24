@@ -77,7 +77,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             // 응답 객체 생성
             NoDataApiResponseDTO loginResponse = NoDataApiResponseDTO.builder()
                     .code(200)
-                    .message("success signUp")
+                    .message("success login")
                     .build();
 
 
