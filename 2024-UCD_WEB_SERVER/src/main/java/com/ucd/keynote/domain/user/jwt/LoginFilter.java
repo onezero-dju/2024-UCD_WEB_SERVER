@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -61,7 +62,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
             // JWT 토큰 생성
-            String token = jwtUtil.createJwt(email, username, role, userId, 60 * 60 * 19L);
+            // JWT 토큰 생성 (UTC 시간으로 발급)
+            Instant now = Instant.now();  // UTC 현재 시간
+            String token = jwtUtil.createJwt(email, username, role, userId, now.getEpochSecond() + (60 * 60 * 19L)); // 유효 기간 19시간
+
 
             // 쿠키 생성 및 설정
             Cookie cookie = new Cookie("token", token);
