@@ -1,10 +1,10 @@
 package com.ucd.keynote.domain.organization.service;
 
 
-import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
+import com.ucd.keynote.common.dto.ApiResponseDTO;
 import com.ucd.keynote.domain.organization.dto.organization.OrganizationResponseDTO;
-import com.ucd.keynote.domain.organization.dto.OrganizationUserDTO;
-import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
+import com.ucd.keynote.domain.organization.dto.organizationUser.OrganizationUserDTO;
+import com.ucd.keynote.domain.organization.dto.organizationUser.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.entity.UserOrganizationId;

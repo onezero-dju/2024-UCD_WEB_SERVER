@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.common.service;
+package com.ucd.keynote.common.service;
 
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;

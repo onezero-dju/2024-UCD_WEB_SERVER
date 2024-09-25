@@ -1,6 +1,5 @@
 package com.ucd.keynote.domain.organization.entity.join;
 
-import com.ucd.keynote.domain.common.entity.BaseEntity;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import jakarta.persistence.*;

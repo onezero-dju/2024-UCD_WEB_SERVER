@@ -3,10 +3,9 @@ package com.ucd.keynote.domain.category.controller;
 import com.ucd.keynote.domain.category.dto.CategoryRequestDTO;
 import com.ucd.keynote.domain.category.dto.CategoryResponseDTO;
 import com.ucd.keynote.domain.category.service.CategoryService;
-import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
+import com.ucd.keynote.common.dto.ApiResponseDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

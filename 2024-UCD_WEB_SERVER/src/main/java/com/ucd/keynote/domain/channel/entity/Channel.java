@@ -1,6 +1,6 @@
 package com.ucd.keynote.domain.channel.entity;
 
-import com.ucd.keynote.domain.common.entity.BaseEntity;
+import com.ucd.keynote.common.entity.BaseEntity;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import jakarta.persistence.*;
 import lombok.Getter;

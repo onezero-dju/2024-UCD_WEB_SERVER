@@ -1,16 +1,18 @@
 package com.ucd.keynote.domain.user.controller;
 
-import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
-import com.ucd.keynote.domain.common.dto.CombinedResponseDTO;
-import com.ucd.keynote.domain.common.dto.NoDataApiResponseDTO;
-import com.ucd.keynote.domain.common.service.AuthService;
-import com.ucd.keynote.domain.common.service.CombinedService;
+import com.ucd.keynote.common.dto.ApiResponseDTO;
+import com.ucd.keynote.common.dto.CombinedResponseDTO;
+import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
+import com.ucd.keynote.common.service.AuthService;
+import com.ucd.keynote.common.service.CombinedService;
 import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.dto.UsernameUpdateRequestDTO;
 import com.ucd.keynote.domain.user.dto.UsernameUpdateResponseDTO;
 import com.ucd.keynote.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,5 +92,7 @@ public class UserController {
         return ResponseEntity.ok(response);
 
     }
+
+
 
 }

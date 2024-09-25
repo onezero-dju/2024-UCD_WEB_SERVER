@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.common.dto;
+package com.ucd.keynote.common.dto;
 
 import lombok.Builder;
 import lombok.Data;

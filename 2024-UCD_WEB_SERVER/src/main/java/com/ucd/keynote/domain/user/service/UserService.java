@@ -1,6 +1,6 @@
 package com.ucd.keynote.domain.user.service;
 
-import com.ucd.keynote.domain.common.service.AuthService;
+import com.ucd.keynote.common.service.AuthService;
 import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.dto.UsernameUpdateResponseDTO;
@@ -27,13 +27,11 @@ public class UserService {
         String password = joinDTO.getPassword();
         String email = joinDTO.getEmail();
 
-        // 이메일 존재하는지 확인
-        Boolean isExist = userRepository.existsByEmail(email);
-
-        if (isExist) {
+/*        // 이메일 존재하는지 확인
+        if (userRepository.existsByEmail(email)) {
             // 이메일 존재할 시 예외 처리
-            return;
-        }
+            throw new IllegalStateException("이미 사용중인 이메일입니다.");
+        }*/
 
         UserEntity user = new UserEntity();
 

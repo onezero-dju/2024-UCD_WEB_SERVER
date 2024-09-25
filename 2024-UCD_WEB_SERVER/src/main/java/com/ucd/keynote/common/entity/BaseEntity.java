@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.common.entity;
+package com.ucd.keynote.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

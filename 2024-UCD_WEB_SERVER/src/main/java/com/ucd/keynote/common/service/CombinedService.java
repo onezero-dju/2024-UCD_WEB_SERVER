@@ -1,10 +1,10 @@
-package com.ucd.keynote.domain.common.service;
+package com.ucd.keynote.common.service;
 
 import com.ucd.keynote.domain.channel.dto.ChannelResponseDTO;
 import com.ucd.keynote.domain.channel.service.ChannelService;
-import com.ucd.keynote.domain.common.dto.CombinedResponseDTO;
+import com.ucd.keynote.common.dto.CombinedResponseDTO;
 import com.ucd.keynote.domain.organization.dto.organization.OrganizationAndChannelResponseDTO;
-import com.ucd.keynote.domain.organization.dto.UserOrganizationDTO;
+import com.ucd.keynote.domain.organization.dto.organizationUser.UserOrganizationDTO;
 import com.ucd.keynote.domain.organization.service.OrganizationService;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.service.UserService;

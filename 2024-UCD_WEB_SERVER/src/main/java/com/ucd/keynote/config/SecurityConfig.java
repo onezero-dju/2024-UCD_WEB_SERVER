@@ -1,4 +1,4 @@
-package com.ucd.keynote.domain.config;
+package com.ucd.keynote.config;
 
 import com.ucd.keynote.domain.user.jwt.JWTFilter;
 import com.ucd.keynote.domain.user.jwt.JWTUtil;

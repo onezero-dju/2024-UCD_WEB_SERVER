@@ -5,7 +5,7 @@ import com.ucd.keynote.domain.channel.dto.ChannelRequestDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelResponseDTO;
 import com.ucd.keynote.domain.channel.entity.Channel;
 import com.ucd.keynote.domain.channel.repository.ChannelRepository;
-import com.ucd.keynote.domain.common.service.AuthService;
+import com.ucd.keynote.common.service.AuthService;
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;

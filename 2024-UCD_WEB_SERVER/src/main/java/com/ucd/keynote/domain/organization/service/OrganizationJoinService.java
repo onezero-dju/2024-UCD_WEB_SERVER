@@ -1,7 +1,6 @@
 package com.ucd.keynote.domain.organization.service;
 
-import com.ucd.keynote.domain.common.dto.ApiResponseDTO;
-import com.ucd.keynote.domain.common.service.AuthService;
+import com.ucd.keynote.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.join.JoinRequestDTO;
 import com.ucd.keynote.domain.organization.dto.join.JoinRequestResponseDTO;
 import com.ucd.keynote.domain.organization.dto.join.JoinResponseDTO;
@@ -14,7 +13,6 @@ import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository
 import com.ucd.keynote.domain.organization.repository.join.OrganizationJoinRepository;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

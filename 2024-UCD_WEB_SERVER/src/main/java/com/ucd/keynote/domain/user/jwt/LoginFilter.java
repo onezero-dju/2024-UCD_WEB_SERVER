@@ -2,7 +2,7 @@ package com.ucd.keynote.domain.user.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ucd.keynote.domain.common.dto.NoDataApiResponseDTO;
+import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.dto.LoginRequestDTO;
 import jakarta.servlet.FilterChain;
