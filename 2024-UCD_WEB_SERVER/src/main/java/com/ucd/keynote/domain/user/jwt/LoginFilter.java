@@ -2,6 +2,7 @@ package com.ucd.keynote.domain.user.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucd.keynote.common.dto.ApiResponseDTO;
 import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.dto.LoginRequestDTO;
@@ -58,7 +59,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             String email = customUserDetails.getEmail();
             String username = customUserDetails.getUsername();
             Long userId = customUserDetails.getUserEntity().getUserId();
-
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
             // JWT 토큰 생성
@@ -66,24 +66,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             Instant now = Instant.now();  // UTC 현재 시간
             String token = jwtUtil.createJwt(email, username, role, userId, now.getEpochSecond() + (60 * 60 * 19L)); // 유효 기간 19시간
 
-
-            // 쿠키 생성 및 설정
-            Cookie cookie = new Cookie("token", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(false);
-            cookie.setPath("/");
-            cookie.setMaxAge(60 * 60 * 19);
-            response.addCookie(cookie);
-
-            // 헤더에 토큰 추가
-            response.addHeader("Authorization", "Bearer " + token);
-
             // 응답 객체 생성
-            NoDataApiResponseDTO loginResponse = NoDataApiResponseDTO.builder()
+            ApiResponseDTO loginResponse = ApiResponseDTO.builder()
                     .code(200)
                     .message("success login")
+                    .data(token)
                     .build();
-
 
             // JSON 응답 설정
             response.setContentType("application/json");

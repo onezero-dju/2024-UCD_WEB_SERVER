@@ -25,7 +25,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         String requestPath = request.getServletPath();
 
         // 특정 경로에 대해서는 필터를 적용하지 않음
@@ -34,7 +35,15 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 쿠키에서 JWT 토큰 추출
+        // Authorization 헤더에서 JWT 토큰 추출
+        String authorizationHeader = request.getHeader("Authorization");
+        String token = null;
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);  // "Bearer " 이후의 토큰만 추출
+        }
+
+        /*// 쿠키에서 JWT 토큰 추출
         String token = null;
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -43,7 +52,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     break;
                 }
             }
-        }
+        }*/
 
         // 토큰이 없거나 만료된 경우
         if (token == null || jwtUtil.isExpired(token)) {
