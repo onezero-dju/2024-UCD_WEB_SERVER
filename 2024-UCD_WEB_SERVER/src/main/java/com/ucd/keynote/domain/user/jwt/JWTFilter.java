@@ -39,20 +39,21 @@ public class JWTFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
 
+
+        // 헤더에서 jwt 토큰 추출
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);  // "Bearer " 이후의 토큰만 추출
-        }
-
-        /*// 쿠키에서 JWT 토큰 추출
-        String token = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("token".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
+        } else {
+            // 쿠키에서 JWT 토큰 추출
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if ("JWT-TOKEN".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        break;
+                    }
                 }
             }
-        }*/
+        }
 
         // 토큰이 없거나 만료된 경우
         if (token == null || jwtUtil.isExpired(token)) {

@@ -14,10 +14,12 @@ import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,6 +120,24 @@ public class OrganizationService {
                         .build()
                 ).collect(Collectors.toList());
     }
-    // 사용자가 속한 조직 목록 조회
+
+    // 조직 검색 서비스
+    public List<OrganizationResponseDTO> searchOrganization(String keyword, int page, int size){
+        PageRequest pageable = PageRequest.of(page, size);
+
+        // 조직 이름에 keyword가 포함된 결과 검색
+        List<Organization> organizations = organizationRepository.findByOrganizationNameContaining(keyword, pageable);
+        System.out.println("검색된 조직: " + organizations.size());
+
+        // 검색 결과 DTO로 변환하여 반환
+        return organizations.stream()
+                .map(org -> OrganizationResponseDTO.builder()
+                        .organizationId(org.getOrganizationId())
+                        .organizationName(org.getOrganizationName())
+                        .description(org.getDescription())
+                        .createdAt(org.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
 }

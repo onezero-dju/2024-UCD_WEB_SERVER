@@ -66,6 +66,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             Instant now = Instant.now();  // UTC 현재 시간
             String token = jwtUtil.createJwt(email, username, role, userId, now.getEpochSecond() + (60 * 60 * 19L)); // 유효 기간 19시간
 
+            // 쿠키에 JWT 토큰을 설정
+            Cookie cookie = new Cookie("JWT-TOKEN", token);
+            cookie.setHttpOnly(true);  // 보안 강화 (JavaScript에서 접근 불가)
+            cookie.setMaxAge(86400);   // 쿠키의 유효 기간을 1일로 설정
+            cookie.setPath("/");       // 모든 경로에서 쿠키가 유효하도록 설정
+            cookie.setSecure(false);    // HTTPS에서만 전송되도록 설정
+
+            // 응답에 쿠키 추가
+            response.addCookie(cookie);
+
             // 응답 객체 생성
             ApiResponseDTO loginResponse = ApiResponseDTO.builder()
                     .code(200)

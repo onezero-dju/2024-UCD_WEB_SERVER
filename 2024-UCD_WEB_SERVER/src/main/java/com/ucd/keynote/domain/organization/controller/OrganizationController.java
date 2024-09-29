@@ -47,6 +47,7 @@ public class OrganizationController {
         return ResponseEntity.ok(response);
     }
 
+    // 조직에 멤버 검색
     @GetMapping("/{organizationId}/users")
     public ResponseEntity<ApiResponseDTO<List<OrganizationUserDTO>>> getUsersByOrganization(@PathVariable Long organizationId) {
         List<OrganizationUserDTO> users = organizationService.getUsersByOrganizationId(organizationId);
@@ -59,4 +60,25 @@ public class OrganizationController {
 
         return ResponseEntity.ok(response);
     }
+
+    // 조직 검색
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponseDTO<List<OrganizationResponseDTO>>> searchOrganization(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ){
+        // 서비스 호출하여 검색 결과 가져오기
+        List<OrganizationResponseDTO> organizations = organizationService.searchOrganization(keyword, page, size);
+
+        ApiResponseDTO<List<OrganizationResponseDTO>> response = ApiResponseDTO.<List<OrganizationResponseDTO>>builder()
+                .code(200)
+                .message("success")
+                .data(organizations)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
 }
