@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucd.keynote.common.dto.ApiResponseDTO;
 import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
+import com.ucd.keynote.common.dto.TokenResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.dto.LoginRequestDTO;
 import jakarta.servlet.FilterChain;
@@ -77,10 +78,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.addCookie(cookie);
 
             // 응답 객체 생성
-            ApiResponseDTO loginResponse = ApiResponseDTO.builder()
+            TokenResponseDTO loginResponse = TokenResponseDTO.builder()
                     .code(200)
                     .message("success login")
-                    .data(token)
+                    .token(token)
                     .build();
 
             // JSON 응답 설정
