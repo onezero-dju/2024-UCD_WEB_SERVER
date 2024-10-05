@@ -50,7 +50,7 @@ public class UserService {
     // 사용자 정보 가져오기
     public UserResponseDTO getUserById(Long userId) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다." + userId));
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
 
         return UserResponseDTO.builder()
                 .userId(user.getUserId())

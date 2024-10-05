@@ -8,10 +8,14 @@ import com.ucd.keynote.domain.organization.dto.organizationUser.UserOrganization
 import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.entity.UserOrganizationId;
+import com.ucd.keynote.domain.organization.exception.DuplicateOrganizationNameException;
+import com.ucd.keynote.domain.organization.exception.InsufficientPermissionException;
+import com.ucd.keynote.domain.organization.exception.InvalidOrganizationDataException;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
 import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;
+import com.ucd.keynote.domain.user.exception.UserNotFoundException;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -34,9 +38,23 @@ public class OrganizationService {
 
     // 조직 생성 서비스
     public ApiResponseDTO<OrganizationResponseDTO> createOrganization(String organizationName, String description, Long userId) {
+        // 사용자 엔티티 조회
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
+
         // 조직 이름이 중복되지 않도록 검사
         if (organizationRepository.existsByOrganizationName(organizationName)) {
-            throw new IllegalArgumentException("Organization name already exists");
+            throw new DuplicateOrganizationNameException("이미 사용되고 있는 조직 이름입니다.");
+        }
+
+        // 필수 필드 확인 (조직 이름)
+        if (organizationName == null || organizationName.isBlank()) {
+            throw new InvalidOrganizationDataException("조직 이름을 입력해 주세요.");
+        }
+
+        // 사용자 권한 확인 (예: admin 역할 확인)
+        if (!userEntity.getRole().equals("admin")) {
+            throw new InsufficientPermissionException("조직 생성 권한이 없습니다.");
         }
 
         // 새로운 조직 생성
@@ -48,9 +66,6 @@ public class OrganizationService {
 
         organizationRepository.save(organization);
 
-        // 사용자 엔티티 조회
-        UserEntity userEntity = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
 
         // 사용자와 조직 간의 관계 설정 (관리자 역할)
         UserOrganizationId id = new UserOrganizationId();
