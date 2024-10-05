@@ -5,6 +5,8 @@ import com.ucd.keynote.domain.user.dto.SignUpRequestDTO;
 import com.ucd.keynote.domain.user.dto.UserResponseDTO;
 import com.ucd.keynote.domain.user.dto.UsernameUpdateResponseDTO;
 import com.ucd.keynote.domain.user.entity.UserEntity;
+import com.ucd.keynote.domain.user.exception.EmailAlreadyExistsException;
+import com.ucd.keynote.domain.user.exception.UserNotFoundException;
 import com.ucd.keynote.domain.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,11 +29,11 @@ public class UserService {
         String password = joinDTO.getPassword();
         String email = joinDTO.getEmail();
 
-/*        // 이메일 존재하는지 확인
+        // 이메일 존재하는지 확인
         if (userRepository.existsByEmail(email)) {
             // 이메일 존재할 시 예외 처리
-            throw new IllegalStateException("이미 사용중인 이메일입니다.");
-        }*/
+            throw new EmailAlreadyExistsException("이미 사용중인 이메일입니다.");
+        }
 
         UserEntity user = new UserEntity();
 
@@ -48,7 +50,7 @@ public class UserService {
     // 사용자 정보 가져오기
     public UserResponseDTO getUserById(Long userId) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다." + userId));
 
         return UserResponseDTO.builder()
                 .userId(user.getUserId())
@@ -64,7 +66,7 @@ public class UserService {
         // 현재 로그인 한 사용자 정보 받아오기
         Long userId = authService.getAuthenticatedUser().getUserId();
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("해당 ID의 사용자가 존재하지 않습니다."));
 
         // 새로운 사용자 이름 설정
         user.setUsername(newUsername);

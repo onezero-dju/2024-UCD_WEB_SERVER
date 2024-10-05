@@ -2,7 +2,6 @@ package com.ucd.keynote.domain.user.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ucd.keynote.common.dto.ApiResponseDTO;
 import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.common.dto.TokenResponseDTO;
 import com.ucd.keynote.domain.user.dto.CustomUserDetails;
@@ -107,7 +106,32 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     //로그인 실패시 실행하는 메소드
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        response.setStatus(401);
+        // 비밀번호 불일치 시 예외 메시지 설정
+        String errorMessage = "비밀번호가 일치하지 않습니다.";
+
+        // JSON 응답 객체 생성
+        NoDataApiResponseDTO errorResponse = NoDataApiResponseDTO.builder()
+                .code(401)
+                .message(errorMessage)
+                .build();
+
+        // 응답 설정
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // 401 Unauthorized
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+            // JSON 응답 쓰기
+            try (OutputStream os = response.getOutputStream()) {
+                os.write(jsonResponse.getBytes(StandardCharsets.UTF_8));
+                os.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();  // IO 오류 처리
+        }
     }
 
 }
