@@ -52,10 +52,6 @@ public class OrganizationService {
             throw new InvalidOrganizationDataException("조직 이름을 입력해 주세요.");
         }
 
-        // 사용자 권한 확인 (예: admin 역할 확인)
-        if (!userEntity.getRole().equals("admin")) {
-            throw new InsufficientPermissionException("조직 생성 권한이 없습니다.");
-        }
 
         // 새로운 조직 생성
         Organization organization = new Organization();
