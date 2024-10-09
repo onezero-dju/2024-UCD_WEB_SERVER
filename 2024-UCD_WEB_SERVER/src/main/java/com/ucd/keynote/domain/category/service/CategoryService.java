@@ -59,12 +59,50 @@ public class CategoryService {
                 .map(category -> CategoryResponseDTO.builder()
                         .categoryId(category.getCategoryId())
                         .name(category.getName())
+                        .channelId(channel.getChannelId())
                         .createdAt(category.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
 
         return response;
     }
+
+    // 카테고리 수정
+    public  CategoryResponseDTO updateCategory(Long channelId, Long categoryId, CategoryRequestDTO request){
+        // 카테고리 받아오기
+
+        // 채널 존재 여부 확인
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("채널이 존재하지 않습니다."));
+
+        // 카테고리 존재 여부 확인
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("카테고리가 존재하지 않습니다."));
+
+        // 동일한 채널 내에서 중복된 카테고리 이름 확인
+        boolean exists = categoryRepository.existsByNameAndChannelId_ChannelId(request.getName(), channelId);
+        if (exists) {
+            throw new RuntimeException("카테고리 이름이 중복됩니다.");
+        }
+
+        // 카테고리 이름 및 설명 수정
+        category.setName(request.getName());
+        category.setUpdatedAt(LocalDateTime.now());
+
+        // DB에 저장
+        categoryRepository.save(category);
+
+        CategoryResponseDTO response = CategoryResponseDTO.builder()
+                .categoryId(category.getCategoryId())
+                .name(category.getName())
+                .createdAt(category.getCreatedAt())
+                .build();
+
+        return response;
+    }
+
+
+    // 카테고리 삭제
 
 
 }

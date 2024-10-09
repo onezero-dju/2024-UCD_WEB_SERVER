@@ -34,13 +34,31 @@ public class CategoryController {
 
     @GetMapping("/{channelId}/categories")
     public ResponseEntity<ApiResponseDTO<List<CategoryResponseDTO>>> getCategory(@PathVariable Long channelId){
-        // 응답 객체 생성
+        // 채널 내 카테고리 조회
         List<CategoryResponseDTO> categories  = categoryService.getCategories(channelId);
 
         ApiResponseDTO<List<CategoryResponseDTO>> response = ApiResponseDTO.<List<CategoryResponseDTO>>builder()
                 .code(200)
                 .message("success")
                 .data(categories )
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{channelId}/categories/{categoryId}")
+    public ResponseEntity<ApiResponseDTO<CategoryResponseDTO>> updateCategory(
+            @PathVariable Long channelId,
+            @PathVariable Long categoryId,
+            @RequestBody CategoryRequestDTO request){
+        // 카테고리 수정 서비스 호출
+        CategoryResponseDTO categoryResponse = categoryService.updateCategory(channelId, categoryId, request);
+
+        // 응답 객체 생성
+        ApiResponseDTO<CategoryResponseDTO> response = ApiResponseDTO.<CategoryResponseDTO>builder()
+                .code(200)
+                .message("Category updated successfully")
+                .data(categoryResponse)
                 .build();
 
         return ResponseEntity.ok(response);
