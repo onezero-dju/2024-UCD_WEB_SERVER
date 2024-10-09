@@ -1,5 +1,6 @@
 package com.ucd.keynote.domain.category.controller;
 
+import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.domain.category.dto.CategoryRequestDTO;
 import com.ucd.keynote.domain.category.dto.CategoryResponseDTO;
 import com.ucd.keynote.domain.category.service.CategoryService;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    // 카테고리 생성
     @PostMapping("/{channelId}/categories")
     public ResponseEntity<ApiResponseDTO<CategoryResponseDTO>> createCategory(@PathVariable Long channelId, @RequestBody CategoryRequestDTO request){
 
@@ -32,6 +34,7 @@ public class CategoryController {
         return ResponseEntity.status(201).body(response);
     }
 
+    // 채널 내 카테고리 조회
     @GetMapping("/{channelId}/categories")
     public ResponseEntity<ApiResponseDTO<List<CategoryResponseDTO>>> getCategory(@PathVariable Long channelId){
         // 채널 내 카테고리 조회
@@ -46,6 +49,7 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
+    // 카테고리 수정
     @PutMapping("/{channelId}/categories/{categoryId}")
     public ResponseEntity<ApiResponseDTO<CategoryResponseDTO>> updateCategory(
             @PathVariable Long channelId,
@@ -59,6 +63,24 @@ public class CategoryController {
                 .code(200)
                 .message("Category updated successfully")
                 .data(categoryResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 카테고리 삭제
+    @DeleteMapping("/{channelId}/categories/{categoryId}")
+    public ResponseEntity<NoDataApiResponseDTO> deleteCategory(
+            @PathVariable Long channelId,
+            @PathVariable Long categoryId){
+
+        // 카테고리 삭제 서비스 호출
+        categoryService.deleteCategory(channelId, categoryId);
+
+        // 응답 객체 생성
+        NoDataApiResponseDTO response = NoDataApiResponseDTO.builder()
+                .code(200)
+                .message("Category deleted successfully")
                 .build();
 
         return ResponseEntity.ok(response);

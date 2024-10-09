@@ -103,6 +103,22 @@ public class CategoryService {
 
 
     // 카테고리 삭제
+    public void deleteCategory(Long channelId, Long categoryId){
+        // 채널 존재 여부 확인
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("채널이 존재하지 않습니다."));
 
+        // 카테고리 존재 여부 확인
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("카테고리가 존재하지 않습니다."));
+
+        // 해당 채널의 카테고리가 맞는지 확인
+        if (!category.getChannelId().getChannelId().equals(channelId)) {
+            throw new RuntimeException("카테고리가 해당 채널에 속하지 않습니다.");
+        }
+
+        // 카테고리 삭제
+        categoryRepository.delete(category);
+    }
 
 }
