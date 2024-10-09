@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -44,4 +46,25 @@ public class CategoryService {
 
         return response;
     }
+
+    // 카테고리 조회
+    public List<CategoryResponseDTO> getCategories(Long channelId){
+        // 채널 존재 여부 확인
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new RuntimeException("채널이 존재하지 않습니다."));
+
+        List<Category> categories = categoryRepository.findByChannelId_ChannelId(channelId);
+
+        List<CategoryResponseDTO> response = categories.stream()
+                .map(category -> CategoryResponseDTO.builder()
+                        .categoryId(category.getCategoryId())
+                        .name(category.getName())
+                        .createdAt(category.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return response;
+    }
+
+
 }

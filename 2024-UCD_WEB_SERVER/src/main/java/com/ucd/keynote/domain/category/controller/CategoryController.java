@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/channels")
@@ -28,7 +30,19 @@ public class CategoryController {
                 .build();
 
         return ResponseEntity.status(201).body(response);
+    }
 
+    @GetMapping("/{channelId}/categories")
+    public ResponseEntity<ApiResponseDTO<List<CategoryResponseDTO>>> getCategory(@PathVariable Long channelId){
+        // 응답 객체 생성
+        List<CategoryResponseDTO> categories  = categoryService.getCategories(channelId);
 
+        ApiResponseDTO<List<CategoryResponseDTO>> response = ApiResponseDTO.<List<CategoryResponseDTO>>builder()
+                .code(200)
+                .message("success")
+                .data(categories )
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
