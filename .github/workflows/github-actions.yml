@@ -1,0 +1,59 @@
+name: CI/CD for Spring Boot Application
+
+# Push가 발생할 때 트리거 설정
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 리포지토리 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. JDK 설정 (Spring Boot 빌드)
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      # 3. Spring Boot 애플리케이션 빌드
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # 4. Docker 이미지 빌드
+      - name: Build Docker image
+        run: |
+          docker build -t eotaegyu/keynote.app:latest .
+
+      # 5. Docker Hub 로그인 (GitHub Secrets 사용)
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      # 6. Docker Hub에 이미지 푸시
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push eotaegyu/keynote.app:latest
+
+  # GCP 인스턴스에서 Docker 이미지를 풀링하고 업데이트하는 단계
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: SSH to GCP instance and pull new Docker image
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.GCP_INSTANCE_IP }}
+          username: ${{ secrets.GCP_INSTANCE_USER }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            docker pull eotaegyu/keynote.a
+            docker-compose down
+            docker-compose up -d
