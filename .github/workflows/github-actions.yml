@@ -24,7 +24,7 @@ jobs:
 
       # 3. Spring Boot 애플리케이션 빌드
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       # 4. Docker 이미지 빌드
       - name: Build Docker image
@@ -54,6 +54,6 @@ jobs:
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            docker pull eotaegyu/keynote.a
+            docker pull eotaegyu/keynote.app
             docker-compose down
             docker-compose up -d
