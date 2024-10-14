@@ -59,7 +59,7 @@ public class CategoryService {
                 .map(category -> CategoryResponseDTO.builder()
                         .categoryId(category.getCategoryId())
                         .name(category.getName())
-                        .channelId(channel.getChannelId())
+                        .channelId(channelId)
                         .createdAt(category.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());

@@ -20,27 +20,34 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
-      # 3. Spring Boot 애플리케이션 빌드
+      # 3. Gradlew 실행 권한 부여
+      - name: Grant execute permission for Gradlew
+        working-directory: ./2024-UCD_WEB_SERVER  # Spring Boot 프로젝트 폴더 경로
+        run: chmod +x gradlew
+
+      # 4. Spring Boot 애플리케이션 빌드
       - name: Build with Gradle
-        run: ./gradlew build
+        working-directory: ./2024-UCD_WEB_SERVER  # Spring Boot 프로젝트 폴더로 이동
+        run: ./gradlew clean build -x test
 
-      # 4. Docker 이미지 빌드
+      # 5. Docker 이미지 빌드
       - name: Build Docker image
+        working-directory: ./2024-UCD_WEB_SERVER  # Docker 빌드를 위해 동일 경로 설정
         run: |
           docker build -t eotaegyu/keynote.app:latest .
 
-      # 5. Docker Hub 로그인 (GitHub Secrets 사용)
+      # 6. Docker Hub 로그인 (GitHub Secrets 사용)
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      # 6. Docker Hub에 이미지 푸시
+      # 7. Docker Hub에 이미지 푸시
       - name: Push Docker image to Docker Hub
         run: |
           docker push eotaegyu/keynote.app:latest
 
-  # GCP 인스턴스에서 Docker 이미지를 풀링하고 업데이트하는 단계
+  # GCP 인스턴스에서 Docker 이미지를 풀링하고 업데이트하는 단계.
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -54,6 +61,6 @@ jobs:
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            docker pull eotaegyu/keynote.a
-            docker-compose down
-            docker-compose up -d
+            sudo docker pull eotaegyu/keynote.app:latest
+            sudo docker-compose down
+            sudo docker-compose up -d
