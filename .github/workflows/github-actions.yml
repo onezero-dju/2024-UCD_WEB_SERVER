@@ -64,3 +64,4 @@ jobs:
             sudo docker pull eotaegyu/keynote.app:latest
             sudo docker-compose down
             sudo docker-compose up -d
+          debug: true
