@@ -47,7 +47,7 @@ jobs:
         run: |
           docker push eotaegyu/keynote.app:latest
 
-  # GCP 인스턴스에서 Docker 이미지를 풀링하고 업데이트하는 단계.
+  # GCP 인스턴스에서 Docker 이미지를 풀링하고 업데이트하는 단계..
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -64,3 +64,4 @@ jobs:
             sudo docker pull eotaegyu/keynote.app:latest
             sudo docker-compose down
             sudo docker-compose up -d
+          debug: true
