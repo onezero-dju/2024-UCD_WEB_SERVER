@@ -11,6 +11,7 @@ import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
 import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
 import com.ucd.keynote.domain.user.entity.UserEntity;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -120,6 +121,28 @@ public class ChannelService {
                 .createdAt(channel.getCreatedAt())
                 .updatedAt(channel.getUpdatedAt())
                 .build();
+    }
+
+    // 채널 삭제 메서드
+    @Transactional
+    public void deleteChannel(Long organizationId, Long channelId) {
+        // 현재 로그인한 사용자 정보 가져오기
+        UserEntity user = authService.getAuthenticatedUser();
+
+        // 조직 내 admin 권한 확인
+        UserOrganization userOrganization = userOrganizationRepository
+                .findByOrganization_OrganizationIdAndUser_UserId(organizationId, user.getUserId())
+                .orElseThrow(() -> new AccessDeniedException("이 조직에서 권한이 없습니다."));
+
+        if (!"admin".equals(userOrganization.getRole())) {
+            throw new AccessDeniedException("admin 권한이 있어야 채널을 삭제할 수 있습니다.");
+        }
+
+        // 채널 조회 및 삭제
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new IllegalArgumentException("채널을 찾을 수 없습니다."));
+
+        channelRepository.delete(channel);
     }
 
 }

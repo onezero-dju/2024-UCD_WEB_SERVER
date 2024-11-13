@@ -1,5 +1,6 @@
 package com.ucd.keynote.domain.channel.controller;
 
+import com.ucd.keynote.common.dto.NoDataApiResponseDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelUpdateRequestDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelRequestDTO;
 import com.ucd.keynote.domain.channel.dto.ChannelResponseDTO;
@@ -68,6 +69,19 @@ public class ChannelController {
                 .code(200)
                 .message("Channel updated Successfully")
                 .data(updatedChannel)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 채널 삭제
+    @DeleteMapping("/organizationsg/{organizationId}/channels/{channelId}")
+    public ResponseEntity<NoDataApiResponseDTO> deleteChannel(@PathVariable Long organizationId, @PathVariable Long channelId) {
+        channelService.deleteChannel(organizationId, channelId);
+
+        NoDataApiResponseDTO response = NoDataApiResponseDTO.builder()
+                .code(200)
+                .message("Channel deleted successfully")
                 .build();
 
         return ResponseEntity.ok(response);
