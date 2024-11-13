@@ -2,6 +2,7 @@ package com.ucd.keynote.domain.organization.service;
 
 
 import com.ucd.keynote.common.dto.ApiResponseDTO;
+import com.ucd.keynote.common.service.AuthService;
 import com.ucd.keynote.domain.organization.dto.organization.OrganizationResponseDTO;
 import com.ucd.keynote.domain.organization.dto.organizationUser.OrganizationUserDTO;
 import com.ucd.keynote.domain.organization.dto.organizationUser.UserOrganizationDTO;
@@ -9,7 +10,6 @@ import com.ucd.keynote.domain.organization.entity.Organization;
 import com.ucd.keynote.domain.organization.entity.UserOrganization;
 import com.ucd.keynote.domain.organization.entity.UserOrganizationId;
 import com.ucd.keynote.domain.organization.exception.DuplicateOrganizationNameException;
-import com.ucd.keynote.domain.organization.exception.InsufficientPermissionException;
 import com.ucd.keynote.domain.organization.exception.InvalidOrganizationDataException;
 import com.ucd.keynote.domain.organization.repository.OrganizationRepository;
 import com.ucd.keynote.domain.organization.repository.UserOrganizationRepository;
@@ -17,13 +17,14 @@ import com.ucd.keynote.domain.user.dto.CustomUserDetails;
 import com.ucd.keynote.domain.user.entity.UserEntity;
 import com.ucd.keynote.domain.user.exception.UserNotFoundException;
 import com.ucd.keynote.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final UserOrganizationRepository userOrganizationRepository;
     private final UserRepository userRepository;
+    private final AuthService authService;
+
 
 
     // 조직 생성 서비스
@@ -151,4 +154,27 @@ public class OrganizationService {
                 .collect(Collectors.toList());
     }
 
+    // 조직 삭제 서비스
+
+    @Transactional
+    public void deleteOrganization(Long organizationId) {
+        // 현재 로그인한 사용자 정보 가져오기
+        UserEntity currentUser = authService.getAuthenticatedUser();
+
+        // 조직 조회
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new IllegalArgumentException("조직이 존재하지 않습니다."));
+
+        // 현재 사용자가 조직의 admin 권한이 있는지 확인
+        UserOrganization userOrganization = userOrganizationRepository
+                .findByOrganization_OrganizationIdAndUser_UserId(organizationId, currentUser.getUserId())
+                .orElseThrow(() -> new AccessDeniedException("이 조직에서 권한이 없습니다."));
+
+        if (!"admin".equals(userOrganization.getRole())) {
+            throw new AccessDeniedException("admin 권한이 있어야 조직을 삭제할 수 있습니다.");
+        }
+
+        // 조직 삭제
+        organizationRepository.delete(organization);
+    }
 }

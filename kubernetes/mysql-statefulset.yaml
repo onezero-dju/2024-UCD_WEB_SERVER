@@ -15,12 +15,23 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: eotaegyu/mysql
+          image: mysql:8
+          resources:
+            limits:
+              cpu: 200m
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 512Mi
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root1234!!"
             - name: MYSQL_DATABASE
               value: "keynote"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              value: "root1234!!"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -34,4 +45,5 @@ spec:
         resources:
           requests:
             storage: 5Gi
-      storageClassName: ""
+        storageClassName: "standard"
+

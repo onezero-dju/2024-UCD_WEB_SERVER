@@ -79,4 +79,19 @@ public class OrganizationController {
 
         return ResponseEntity.ok(response);
     }
+
+    // 조직 삭제 API
+    @DeleteMapping("/{organizationId}")
+    public ResponseEntity<ApiResponseDTO<Void>> deleteOrganization(@PathVariable Long organizationId) {
+        organizationService.deleteOrganization(organizationId);
+
+        // 성공 응답 반환
+        ApiResponseDTO<Void> response = ApiResponseDTO.<Void>builder()
+                .code(200)
+                .message("Organization deleted successfully")
+                .data(null)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }
